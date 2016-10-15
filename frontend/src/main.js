@@ -5,6 +5,8 @@ import VueResource from 'vue-resource'
 
 import App from './App'
 
+require('./assets/js/dependencies.js')
+
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueResource)
@@ -12,6 +14,7 @@ Vue.use(VueResource)
 Vue.component('app', App)
 
 import {routes} from './routes'
+// Register vue component
 
 const router = new VueRouter({
   mode: 'history',
