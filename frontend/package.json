@@ -11,9 +11,16 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "font-awesome": "^4.6.3",
+    "less-loader": "^2.2.3",
+    "node-less": "^1.0.0",
+    "node-sass": "^3.10.1",
+    "node-sass-loader": "^0.1.7",
+    "sass-loader": "^4.0.2",
     "vue": "^2.0.1",
     "vue-resource": "^1.0.3",
-    "vue-router": "^2.0.0"
+    "vue-router": "^2.0.0",
+    "vuex": "^2.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",

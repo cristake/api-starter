@@ -1,8 +1,11 @@
 <template>
   <div class="container" id="login-wrapper">
     <form class="form-signin" @submit.prevent="handleLogIn">
-      <h2 class="form-signin-heading">Please sign in</h2>
+      <h2 class="form-signin-heading"><i class="fa fa-key"></i>Please sign in</h2>
       <label for="inputEmail" class="sr-only">Email address</label>
+      <div v-if="errors" class="alert alert-danger">
+        <li>{{ error }}</li>
+      </div>
       <input 
         type="email" 
         id="inputEmail" 
@@ -42,17 +45,18 @@ export default {
       loginForm: {
         email: '',
         password: ''
-      }
+      },
+      errors: false
     }
   },
   created () {
-    console.log('Check is loged')
     if (this.userIsLoggedIn()) {
-      this.$router.push({name: 'loginForm'})
+      this.$router.push({name: 'dashboard'})
     }
   },
   methods: {
     handleLogIn () {
+      this.errors = false
       const postData = {
         grant_type: grantType,
         client_id: clientId,
@@ -64,6 +68,7 @@ export default {
       const authUser = {}
       this.$http.post(loginUrl, postData)
       .then(response => {
+        console.log(response)
         if (response.status === 200) {
           authUser.access_token = response.body.access_token
           authUser.refresh_token = response.body.refresh_token
@@ -74,22 +79,31 @@ export default {
           authUser.name = response.body.name
           authUser.email = response.body.email
           window.localStorage.setItem('authUser', JSON.stringify(authUser))
+          this.$router.push({name: 'dashboard'})
         })
-        this.$router.push({name: 'dashboard'})
+      })
+      .catch(rejected => {
+        this.errors = rejected
       })
     },
     userIsLoggedIn () {
       return window.localStorage.getItem('authUser')
     }
+  },
+  computed: {
+    error () {
+      console.log(this.errors.body.message)
+      this.error = this.errors.body.message
+    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
   body {
     padding-top: 40px;
     padding-bottom: 40px;
-    background-color: #eee;
+    background-color: #065065;
   }
 
   .form-signin {
@@ -127,3 +141,5 @@ export default {
     border-top-right-radius: 0;
   }
 </style>
+
+

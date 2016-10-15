@@ -1,9 +1,11 @@
 import Vue from 'vue'
+import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 
 import App from './App'
 
+Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueResource)
 /* eslint-disable no-new */
@@ -29,18 +31,16 @@ router.beforeEach((to, from, next) => {
   // Dont allow to visit login page if authenticated
   if (requiresAuth()) {
     if (userIsLoggedIn()) {
-      if (to.name === 'loginPage') {
-      }
-      next()
+      return next()
     } else {
-      next({name: 'loginPage'})
+      return next({name: 'loginPage'})
     }
   } else {
     if (userIsLoggedIn() && to.path === '/login') {
-      next({name: 'dashboard'})
+      return next({name: 'dashboard'})
     }
   }
-  next()
+  return next()
 })
 
 new Vue({

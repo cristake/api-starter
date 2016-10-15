@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <top-menu v-if="requireMenu"></top-menu>
@@ -23,11 +24,9 @@ export default {
     console.log('The app has been create. ')
   },
   computed: {
-    
   }
 }
 </script>
-
-<style lang="css">
-  @import './assets/css/bootstrap/dist/css/bootstrap.css'
+<style lang="sass">
+  @import './assets/css/main.css';
 </style>

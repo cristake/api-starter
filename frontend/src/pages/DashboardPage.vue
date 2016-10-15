@@ -17,11 +17,15 @@ export default {
     }
   },
   created () {
+    // console.log('Parse the user')
     this.user = JSON.parse(window.localStorage.getItem('authUser'))
     // this.$http.get(apiDomain + 'user', {headers: getHeader()})
     // .then(response => {
     //   this.user = response.data
     // })
+  },
+  computed: {
+    // this.user = JSON.parse(window.localStorage.getItem('authUser'))
   }
 }
 </script>
