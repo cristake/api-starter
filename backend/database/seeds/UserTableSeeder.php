@@ -2,7 +2,7 @@
 
 use App\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+// use Illuminate\Support\Facades\Hash;
 
 class UserTableSeeder extends Seeder
 {
@@ -14,11 +14,20 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         $user1 = [
-            'name' => 'Yismen Jorge',
-            'email' => 'yismen.jorge@gmail.com',
-            'password' => Hash::make('jimmagic32'),
+            'name' => 'Cristian Iosif',
+            'email' => 'cristianiosif@me.com',
+            // 'password' => Hash::make('parola'),
+            'password' => bcrypt('parola')
+        ];
+
+        $user2 = [
+            'name' => 'Mihnea Iosif',
+            'email' => 'mihneaiosif@icloud.com',
+            // 'password' => Hash::make('parola'),
+            'password' => bcrypt('parola')
         ];
 
         User::create($user1);
+        User::create($user2);
     }
 }

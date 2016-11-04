@@ -17,7 +17,8 @@ class Cors
     {
         // dd($request->server());
         $allowedDomains = [
-            'http://localhost:8080'
+            'http://localhost:8080',
+            'http://api-starter.app'
         ];
 
         if (isset($request->server()['HTTP_ORIGIN'])) {

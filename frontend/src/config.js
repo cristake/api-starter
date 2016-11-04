@@ -1,6 +1,7 @@
-export const baseDomain = 'http://localhost:8000/'
+export const baseDomain = 'http://api-starter.api/'
 export const apiDomain = baseDomain + 'api'
 export const loginUrl = baseDomain + 'oauth/token/'
+export const registerUrl = apiDomain + '/users'
 
 export const getHeader = function () {
   const tokenData = JSON.parse(window.localStorage.getItem('authUser'))

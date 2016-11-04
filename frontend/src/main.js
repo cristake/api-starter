@@ -2,14 +2,17 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+import store from './store'
 
 import App from './App'
 
+global.jQuery = require('jquery')
 require('./assets/js/dependencies.js')
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueResource)
+
 /* eslint-disable no-new */
 Vue.component('app', App)
 
@@ -30,6 +33,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = function () {
     return to.meta.requiresAuth
   }
+
   // console.log('Login page ', to)
   // Dont allow to visit login page if authenticated
   if (requiresAuth()) {
@@ -43,9 +47,10 @@ router.beforeEach((to, from, next) => {
       return next({name: 'dashboard'})
     }
   }
+
   return next()
 })
 
 new Vue({
-  router
+  router, store
 }).$mount('#app')
