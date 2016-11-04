@@ -1,0 +1,8 @@
+/backend/node_modules
+/frontend/node_modules
+/backend/vendor
+/backend/.idea
+/backend/Homestead.json
+/backend/Homestead.yaml
+/backend/.env
+.DS_Store
