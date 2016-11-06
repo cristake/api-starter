@@ -3,29 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\User;
 use Illuminate\Http\Request;
+use App\Transformers\UserTransformer;
+use App\Repositories\UserRepository as User;
 
 class UserController extends Controller
 {
+    /**
+     * The user
+     *
+     * @return void
+     */
+    private $user;
+
+    /**
+     * Create a new user instance.
+     *
+     * @return void
+     */
+    public function __construct(User $user)
+    {
+        // $this->middleware('auth:api', ['except' => ['store']]);
+        $this->user = $user;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $users = $this->user->all();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $this->response
+            ->collection($users, new UserTransformer, ['key' => 'users']);
     }
 
     /**
@@ -36,7 +48,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::create([
+        $user = $this->user->create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
             'password' => bcrypt($request->get('password'))
@@ -53,18 +65,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
-    }
+        $user = $this->user->find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        if($user) {
+            return $this->response
+                ->item($user, new UserTransformer, ['key' => 'user']);
+        }
+        else {
+            throw new \Dingo\Api\Exception\ResourceException("Unprocessable Entity");
+        }
     }
 
     /**
@@ -87,6 +96,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->user->delete($id);
     }
 }

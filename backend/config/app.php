@@ -166,8 +166,8 @@ return [
         /*
          * Package Service Providers...
          */
-
         Laravel\Passport\PassportServiceProvider::class,
+        Dingo\Api\Provider\LaravelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -226,6 +226,10 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        /*
+         * 3rd Party Aliases
+         */
+        'Fractal' => Spatie\Fractal\FractalFacade::class,
     ],
 
 ];

@@ -13,7 +13,12 @@ export default {
 
   created () {
     window.localStorage.removeItem('authUser')
+
     this.$store.dispatch('setUserObject', null)
+
+    // fire an event
+    this.$events.fire('userLoggedOut', {type: 's', message: 'Delogare cu succes!', title: 'Success!'})
+
     this.$router.push({name: 'loginPage'})
   }
 }

@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// See RouteServiceProvider for more
+// Route::get('/', function () {
+//     return view('welcome');
+// });

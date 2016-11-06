@@ -1,14 +1,14 @@
 <template>
   <div class="container" id="login-wrapper">
     <form class="form-signin" @submit.prevent="handleLogIn">
-      <h2 class="form-signin-heading"><i class="fa fa-key"></i> Please sign in</h2>
+      <legend><i class="fa fa-key"></i> Please sign in</legend>
 
-      <div class="form-group" id="inputEmail">
+      <form-error v-if="errors.message" :errors="errors">
+        {{ error }}
+      </form-error>
+
+      <div class="form-group" :class="errors.message ? ' has-error' : ''" id="inputEmail">
         <label for="inputEmail" class="sr-only">Email address</label>
-        <div v-if="errors" class="alert alert-danger">
-          <!-- <li>{{ error }}</li> -->
-          <span>{{ errors.body.message }}</span>
-        </div>
         <input
           type="email"
           id="inputEmail"
@@ -19,7 +19,7 @@
         >
       </div>
 
-      <div class="form-group" id="inputPassword">
+      <div class="form-group" :class="errors.message ? ' has-error' : ''" id="inputPassword">
         <label for="inputPassword" class="sr-only">Password</label>
         <input
           type="password"
@@ -46,11 +46,13 @@
   import {mapState} from 'vuex'
   import {loginUrl, getHeader, apiDomain} from './../config'
   import {grantType, clientId, clientSecret} from './../.env'
+  import FormError from './../components/FormError'
 
   export default {
     name: 'login-page',
 
     components: {
+      FormError
     },
 
     data () {
@@ -59,7 +61,7 @@
           email: '',
           password: ''
         },
-        errors: false
+        errors: []
       }
     },
 
@@ -71,8 +73,6 @@
 
     methods: {
       handleLogIn () {
-        this.errors = false
-
         const postData = {
           grant_type: grantType,
           client_id: clientId,
@@ -86,7 +86,7 @@
 
         this.$http.post(loginUrl, postData)
           .then(response => {
-            console.log(response)
+            // console.log(response.data)
 
             if (response.status === 200) {
               authUser.access_token = response.body.access_token
@@ -97,17 +97,30 @@
 
             this.$http.get(apiDomain + '/user', { headers: getHeader() })
               .then(response => {
-                authUser.name = response.body.name
-                authUser.email = response.body.email
+                // console.log(response.data.user)
+
+                authUser.id = response.data.user.id
+                authUser.name = response.data.user.name
+                authUser.email = response.data.user.email
+
+                // save user obj to local storage
                 window.localStorage.setItem('authUser', JSON.stringify(authUser))
+
+                // store the state of the user
                 this.$store.dispatch('setUserObject', authUser)
+
+                // fire an event
+                this.$events.fire('userLoggedIn', {type: 's', message: 'Logare cu succes!', title: 'Success!'})
+
+                // redirect user after login
                 this.$router.push({name: 'dashboard'})
               })
           })
           .catch(rejected => {
-            this.errors = rejected
+            this.errors = rejected.body
           })
       },
+
       userIsLoggedIn () {
         return window.localStorage.getItem('authUser')
       }
@@ -119,8 +132,8 @@
       }),
 
       error () {
-        console.log(this.errors.body.message)
-        this.error = this.errors.body.message
+        console.log(this.errors.message)
+        return this.errors.message
       }
     }
   }

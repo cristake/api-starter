@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->map404Catcher();
     }
 
     /**
@@ -75,5 +75,16 @@ class RouteServiceProvider extends ServiceProvider
         ], function ($router) {
             require base_path('routes/api.php');
         });
+    }
+
+
+    /**
+     * Define a 404 catcher.
+     */
+    protected function map404Catcher()
+    {
+        Route::get('{all}', function () {
+            abort(404);
+        })->where('all', '.*');
     }
 }

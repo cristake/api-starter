@@ -3,12 +3,12 @@
     <form class="form-register" @submit.prevent="handleRegister">
       <h2 class="form-register-heading"><i class="fa fa-key"></i> Create a new account</h2>
 
-      <div class="form-group" id="inputName">
+      <form-error v-if="errors.message" :errors="errors">
+        {{ error }}
+      </form-error>
+
+      <div class="form-group" :class="errors.message ? ' has-error' : ''" id="inputName">
         <label for="inputName" class="sr-only">Name</label>
-        <div v-if="errors" class="alert alert-danger">
-          <!-- <li>{{ error }}</li> -->
-          <span>{{ errors.body.message }}</span>
-        </div>
         <input
           type="text"
           id="inputname"
@@ -19,23 +19,19 @@
         >
       </div>
 
-      <div class="form-group" id="inputEmail">
+      <div class="form-group" :class="errors.message ? ' has-error' : ''" id="inputEmail">
         <label for="inputEmail" class="sr-only">Email address</label>
-        <div v-if="errors" class="alert alert-danger">
-          <!-- <li>{{ error }}</li> -->
-          <span>{{ errors.body.message }}</span>
-        </div>
         <input
           type="email"
           id="inputEmail"
           class="form-control"
           placeholder="Email address"
-          required autofocus
+          required
           v-model = "registerForm.email"
         >
       </div>
 
-      <div class="form-group" id="inputPassword">
+      <div class="form-group" :class="errors.message ? ' has-error' : ''" id="inputPassword">
         <label for="inputPassword" class="sr-only">Password</label>
         <input
           type="password"
@@ -56,11 +52,13 @@
   import {mapState} from 'vuex'
   import {registerUrl, loginUrl, getHeader, apiDomain} from './../config'
   import {grantType, clientId, clientSecret} from './../.env'
+  import FormError from './../components/FormError'
 
   export default {
     name: 'register-page',
 
     components: {
+      FormError
     },
 
     data () {
@@ -70,7 +68,7 @@
           email: '',
           password: ''
         },
-        errors: false
+        errors: []
       }
     },
 
@@ -82,7 +80,7 @@
 
     methods: {
       handleRegister () {
-        this.errors = false
+        // this.errors = false
 
         const postData = {
           name: this.registerForm.name,
@@ -92,9 +90,9 @@
 
         this.$http.post(registerUrl, postData)
           .then(response => {
-            if (response.status === 200) {
-              console.log(response)
+            // console.log(response.data.user)
 
+            if (response.status === 200) {
               const registerData = {
                 grant_type: grantType,
                 client_id: clientId,
@@ -108,7 +106,7 @@
 
               this.$http.post(loginUrl, registerData)
                 .then(response => {
-                  console.log(response)
+                  // console.log(response)
 
                   if (response.status === 200) {
                     authUser.access_token = response.body.access_token
@@ -119,22 +117,37 @@
 
                   this.$http.get(apiDomain + '/user', { headers: getHeader() })
                     .then(response => {
-                      authUser.name = response.body.name
-                      authUser.email = response.body.email
+                      // console.log(response.data.user)
+
+                      authUser.id = response.data.user.id
+                      authUser.name = response.data.user.name
+                      authUser.email = response.data.user.email
+
+                    // save user obj to local storage
                       window.localStorage.setItem('authUser', JSON.stringify(authUser))
+
+                      // store the state of the user
                       this.$store.dispatch('setUserObject', authUser)
+
+                      // fire an event
+                      this.$events.fire('userRegistered', {type: 's', message: 'Te-ai inregistrat cu succes!', title: 'Success!'})
+
+                      // redirect user after login
                       this.$router.push({name: 'dashboard'})
                     })
                 })
                 .catch(rejected => {
-                  this.errors = rejected
+                  console.log(this.errors)
+                  this.errors = rejected.body
                 })
             }
           })
           .catch(rejected => {
-            this.errors = rejected
+            console.log(rejected.data)
+            this.errors = rejected.data
           })
       },
+
       userIsLoggedIn () {
         return window.localStorage.getItem('authUser')
       }
@@ -146,8 +159,8 @@
       }),
 
       error () {
-        console.log(this.errors.body.message)
-        this.error = this.errors.body.message
+        console.log(this.errors.message)
+        return this.errors.message
       }
     }
   }
